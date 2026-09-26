@@ -1,0 +1,8 @@
+{
+  "name": "vortex-local-archive",
+  "private": true,
+  "scripts": {
+    "build:css": "tailwindcss -c frontend/tailwind.config.cjs -i frontend/input.css -o backend/app/static/tailwind.css --minify"
+  },
+  "devDependencies": {"tailwindcss": "3.4.17"}
+}
