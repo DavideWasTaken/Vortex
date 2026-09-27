@@ -1,27 +1,58 @@
-# Vortex
+<p align="center">
+  <img src="backend/app/static/vortex-icon.svg" width="80" height="80" alt="Vortex logo">
+</p>
 
-**Find past projects through their documents, images, and drawings — with search models running locally.**
+<h1 align="center">Vortex</h1>
 
-[![Checks](https://github.com/DavideWasTaken/Vortex/actions/workflows/check.yml/badge.svg)](https://github.com/DavideWasTaken/Vortex/actions/workflows/check.yml)
+<p align="center"><strong>Find the project you remember, through the files you kept.</strong></p>
+<p align="center">A local archive for documents, images and CAD drawings.<br>Search by meaning and visual similarity. Open the files behind each result.</p>
 
-Vortex is a self-hosted project archive for technical and creative work. Upload the files behind a project, then search across document text, visual similarity, titles, and filenames. Results include the evidence that led to the match.
+<p align="center">
+  <a href="https://github.com/DavideWasTaken/Vortex/actions/workflows/check.yml"><img src="https://github.com/DavideWasTaken/Vortex/actions/workflows/check.yml/badge.svg" alt="Checks"></a>
+  <img src="https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white" alt="Python 3.11 or later">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-0d9488" alt="MIT license"></a>
+</p>
 
-**Status: working prototype for a trusted team or local machine.** Text and visual search work end to end; retrieval quality has not been measured against a representative evaluation dataset.
+<p align="center">
+  <a href="#try-it-locally">Quick start</a> ·
+  <a href="#what-you-can-do">Features</a> ·
+  <a href="#how-it-works">How it works</a> ·
+  <a href="#what-to-expect-from-search">Current limits</a>
+</p>
 
-```text
-Documents / images / CAD → Extraction and previews → Local embeddings → Qdrant
-          Project metadata, users and sessions → SQLite                  ↓
-                                                     Search with evidence
-```
+![Vortex searching for a modular workspace, with matching projects, document excerpts and image previews](docs/images/search.png)
 
-## Capabilities
+*The running app with fictional demo projects. Results show source files, text excerpts and visual previews; scores are ranking hints.*
 
-- Project creation, file uploads, metadata editing, reindexing, and deletion.
-- Text extraction from PDF, DOCX, text, Markdown, CSV/log, and supported CAD files.
-- Local text and image embeddings through FastEmbed, with Qdrant vector search and lexical ranking.
-- Native DXF parsing and best-effort DWG support through optional external converters.
-- An Italian/English browser interface with locally bundled CSS.
-- Admin and reader roles, hashed passwords, server-side sessions, and authenticated downloads.
+## Why Vortex?
+
+You remember a courtyard layout, a material choice or an assembly detail. The filename is another matter.
+
+Vortex keeps the files behind technical and creative projects together, so you can search their content and return to the original work. It combines local text and image models with title, filename and content matching.
+
+**No external LLM API key is needed.** Model inference runs locally; the first use downloads model weights.
+
+> **Working prototype.** Designed for a local machine or trusted team. Text and visual search work end to end, but retrieval quality has not been measured against a representative evaluation dataset. All signed-in users share one archive.
+
+## What you can do
+
+| | In Vortex |
+| --- | --- |
+| **Search beyond filenames** | Find projects using document text, semantic similarity and visual matches. |
+| **See the source** | Inspect matching excerpts and previews, then open or download the original files. |
+| **Keep projects together** | Upload files, edit project notes, add assets, reindex and delete projects. |
+| **Work with mixed formats** | PDF, DOCX, text, Markdown, CSV/log, images and DXF; DWG support depends on optional converters. |
+| **Run it locally** | FastEmbed models, Qdrant vector storage and SQLite metadata on your own machine or server. |
+| **Share a team archive** | Admin and reader roles, authenticated downloads, and an Italian/English interface. |
+
+<details>
+<summary><strong>A closer look at a project</strong></summary>
+
+![Vortex project detail showing indexed assets, previews, downloads, project notes and upload controls](docs/images/project.png)
+
+An admin can inspect indexing status, download assets, edit notes and add files from the same project view. This screenshot uses the fictional Atrium workspace project.
+
+</details>
 
 ## Try it locally
 
@@ -47,6 +78,26 @@ python -m uvicorn app.main:app --app-dir backend --host 127.0.0.1 --port 8000
 Without `QDRANT_URL`, Qdrant uses embedded local storage. Upload a small document, wait for its status to become ready, then search for a concept in its content.
 
 **The first text or image operation downloads the required model weights.** Inference runs locally after the weights are cached; the default model cache is managed by FastEmbed. No external LLM API key is needed, and uploaded documents are not sent to an inference API.
+
+## How it works
+
+```mermaid
+flowchart LR
+    A[Documents, images and CAD] --> B[Text extraction and previews]
+    B --> C[Local text and image embeddings]
+    C --> D[Qdrant vector index]
+    E[Search query] --> F[Semantic, visual and lexical ranking]
+    D --> F
+    G[SQLite project metadata] --> F
+    F --> H[Projects with source evidence]
+```
+
+| Layer | Technology |
+| --- | --- |
+| API and access | Python · FastAPI · server-side sessions |
+| Search models | FastEmbed · multilingual text embeddings · CLIP |
+| Storage | Qdrant · SQLite · local files |
+| Interface | HTML · JavaScript · locally bundled Tailwind CSS |
 
 ## Deployment and access
 
